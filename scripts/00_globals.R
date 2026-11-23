@@ -6,10 +6,15 @@ library(here)
 library(janitor)
 library(sf)
 
+source(here("scripts/src/other_functions.R"))
+
 source(here("scripts/src/country_bboxes.R"))
 country_bbox_data <- load_country_bbox_data(here("data/country_bbox_data.csv"))
 
-assigned_farms <- file.path(prepdata_path, "assigned_farms_final.qs") %>% 
+land_poly_files <- here("data/land_polygons_plotting") %>% 
+  list.files(full.names = T)
+
+assigned_farms <- here("data/assigned_farms_final.qs") %>% 
   qs_read() %>% 
   arrange(ISO3_Code)
 
@@ -24,16 +29,18 @@ GLW_labels <- c("GLW_1.5" = "1.5°C", "GLW_2.0" = "2°C", "GLW_3.0" = "3°C", "G
 report_theme <- function() {
   theme_classic(base_size = 10) +
     theme(
+      text = element_text(family = "serif", colour = "black"),
       # plot.title            = element_text(face = "bold", size = 14),
       # plot.subtitle         = element_text(size = 10, margin = margin(b = 6)),
-      legend.text           = element_text(size = 9),
-      legend.title          = element_text(size = 10),
+      legend.text           = element_text(),
+      legend.title          = element_text(),
       legend.margin         = margin(b = -4),
       panel.grid.major.y    = element_blank(),
       panel.grid.minor      = element_blank(),
       panel.grid.major.x    = element_line(colour = "grey92", linewidth = 0.4),
-      axis.text.y           = element_text(colour = "grey25", size = 10),
-      axis.title.x          = element_text(margin = margin(t = 6)),
+      axis.text.y           = element_text(),
+      axis.title.x          = element_text(margin = margin(t = 6), vjust = 1.5),
+      axis.title.y          = element_text(vjust = 1.5),
       plot.margin           = margin(10, 15, 10, 10)
     )
   }
@@ -51,6 +58,8 @@ farm_map_theme <- function() {
     theme(
       legend.position       = "bottom",
       legend.justification  = "center",
+      legend.title = element_blank(),
+      axis.title = element_blank()
     )
 }
 
@@ -91,7 +100,7 @@ models_pal <- c(
   nile_tilapia = "#FEDCC3"
 )
 
-models_labs <- c(
+models_lab <- c(
   tuna_ranch = "Tuna (ranched)",
   atlantic_salmon = "Atlantic salmon",
   whiteleg_shrimp = "Shrimp",
@@ -110,21 +119,3 @@ models_labs <- c(
   asian_seabass = "Tropical/hybrid basses",
   milkfish = "Milkfish"
 )
-
-# Step 2: Create maps of the farm locations
-source(here("scripts_for_outputs/01_map_of_farms.R"))
-
-# Step 3: Collate country summary tables (farms per model, excluded farms, FAO production) into one csv per country
-source(here("scripts_for_outputs/02_country_info.R"))
-
-# Step 4: Dot-and-line plot of projected biomass change per model at each GLW
-source(here("scripts_for_outputs/03_production_change.R"))
-
-# Step 5: Dot-and-line plot of projected change in feed per unit biomass per model at each GLW
-source(here("scripts_for_outputs/04_feed_per_biomass_change.R"))
-
-# Step 6: Maps of change in habitat suitability at each GLW, per species and production-weighted
-source(here("scripts_for_outputs/05_habitat_suitability_change.R"))
-
-# Step 7: Tables of mean habitat suitability and % change at each GLW (whole EEZ and within 50 km of the coast)
-source(here("scripts_for_outputs/06_habitat_suitability_change_stats.R"))
