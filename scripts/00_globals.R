@@ -19,13 +19,10 @@ assigned_farms <- here("data/assigned_farms_final.qs") %>%
   qs_read() %>% 
   arrange(ISO3_Code)
 
-GLW_ls <- list(
-  "GLW_1.5" = 2018:2037,
-  "GLW_2.0" = 2032:2051,
-  "GLW_3.0" = 2055:2074,
-  "GLW_4.0" = 2075:2094
-)
-GLW_labels <- c("GLW_1.5" = "1.5°C", "GLW_2.0" = "2°C", "GLW_3.0" = "3°C", "GLW_4.0" = "4°C")
+GLW_ls      <- list("GLW_1.5" = 2018:2037,   "GLW_2.0" = 2032:2051,   "GLW_3.0" = 2055:2074,  "GLW_4.0" = 2075:2094)
+GLW_labels  <- c(   "GLW_1.5" = "1.5°C",     "GLW_2.0" = "2°C",       "GLW_3.0" = "3°C",      "GLW_4.0" = "4°C")
+GLW_cols    <- c(   "1.5°C"   = "#E9A23B", "2°C"     = "#DB5F32", "3°C"    = "#B3243B", "4°C" = "#5C0F2E")
+GLW_offsets <- c(   "1.5°C"   = -0.24,       "2°C"     = -0.08,       "3°C"     = 0.08,       "4°C" = 0.24)
 
 report_theme <- function() {
   theme_classic(base_size = 10) +
@@ -42,7 +39,7 @@ report_theme <- function() {
       axis.text.y           = element_text(),
       axis.title.x          = element_text(margin = margin(t = 6), vjust = 1.5),
       axis.title.y          = element_text(vjust = 1.5),
-      plot.margin           = margin(10, 15, 10, 10)
+      plot.margin           = margin(t = 0.5, r = 0.5, b = 0, l = 0.5, unit = "cm")
     )
   }
 
@@ -75,9 +72,8 @@ grid_map_theme <- function() {
     )
 }
 
-# Height (inches) for the dot-and-line GLW plots, scaled to the number of models on the y axis.
-# `base` covers the title, legend and x axis; `min_height` stops 1-2 model plots looking squashed.
-GLW_plot_height <- function(n_models, per_model = 0.7, base = 1.25, min_height = 2.5) {
+# Height (cm) for the dot-and-line GLW plots, scaled to the number of models on the y axis. `base` covers the title, legend and x axis; `min_height` stops 1-2 model plots looking squashed.
+GLW_plot_height <- function(n_models, per_model = 1.75, base = 3.25, min_height = 6) {
   max(min_height, base + per_model * n_models)
 }
 
