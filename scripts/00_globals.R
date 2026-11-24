@@ -95,6 +95,21 @@ grid_map_theme <- function() {
     )
 }
 
+radial_plot_theme <- function() {
+  theme_void() +
+    theme(
+      legend.position       = "bottom",
+      legend.title          = element_text(size = 8, hjust = 0.5),
+      legend.title.position = "top",
+      legend.text.position  = "bottom",
+      legend.text           = element_text(size = 7, hjust = 0.5),
+      legend.justification  = "center",
+      legend.key.width      = unit(3, "lines"),
+      legend.key.spacing    = unit(1, "pt"),
+      strip.text            = element_blank()
+    )
+}
+
 # Height (cm) for the dot-and-line GLW plots, scaled to the number of models on the y axis. `base` covers the title, legend and x axis; `min_height` stops 1-2 model plots looking squashed.
 GLW_plot_height <- function(n_models, per_model = 1.75, base = 3.25, min_height = 6) {
   max(min_height, base + per_model * n_models)
