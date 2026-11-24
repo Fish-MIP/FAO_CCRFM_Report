@@ -34,6 +34,12 @@ get_country_data <- function(fnms) {
   )
 }
 
+# Mean across species rasters, weighted by each model's current production
+weighted_HS <- function(rasts, weights) {
+  w <- weights / sum(weights)
+  Reduce(`+`, map2(rasts, w, \(r, wi) r * wi))
+}
+
 # Percentage y-axis helpers ---------------------------------------------------
 #
 # Limits are rounded outward to a "round" percentage just outside the data range, and breaks run between them in 10% steps, or 5% steps if 10% would give too few breaks. Values are assumed to be proportions (0.85 = 85%).
