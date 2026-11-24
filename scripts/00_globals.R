@@ -1,11 +1,14 @@
 # Load all the packages and data needed for all visualisation scripts
 
 library(tidyverse)
+library(terra)
 library(qs2)
 library(here)
 library(janitor)
 library(sf)
 library(readxl)
+library(tidyterra)
+library(cmocean)
 
 source(here("scripts/src/other_functions.R"))
 
@@ -19,10 +22,11 @@ assigned_farms <- here("data/assigned_farms_final.qs") %>%
   qs_read() %>% 
   arrange(ISO3_Code)
 
-GLW_ls      <- list("GLW_1.5" = 2018:2037,   "GLW_2.0" = 2032:2051,   "GLW_3.0" = 2055:2074,  "GLW_4.0" = 2075:2094)
-GLW_labels  <- c(   "GLW_1.5" = "1.5°C",     "GLW_2.0" = "2°C",       "GLW_3.0" = "3°C",      "GLW_4.0" = "4°C")
-GLW_cols    <- c(   "1.5°C"   = "#E9A23B", "2°C"     = "#DB5F32", "3°C"    = "#B3243B", "4°C" = "#5C0F2E")
-GLW_offsets <- c(   "1.5°C"   = -0.24,       "2°C"     = -0.08,       "3°C"     = 0.08,       "4°C" = 0.24)
+GLW_ls       <- list("GLW_1.5" = 2018:2037,   "GLW_2.0" = 2032:2051,   "GLW_3.0" = 2055:2074,  "GLW_4.0" = 2075:2094)
+GLW_labels   <- c(   "GLW_1.5" = "1.5°C",     "GLW_2.0" = "2°C",       "GLW_3.0" = "3°C",      "GLW_4.0" = "4°C")
+GLW_cols     <- c(   "1.5°C"   = "#E9A23B", "2°C"     = "#DB5F32", "3°C"    = "#B3243B", "4°C" = "#5C0F2E")
+GLW_offsets  <- c(   "1.5°C"   = -0.24,       "2°C"     = -0.08,       "3°C"     = 0.08,       "4°C" = 0.24)
+HS_lyr_names <- c("ref_2015_2024", names(GLW_ls))
 
 report_theme <- function() {
   theme_classic(base_size = 10) +
@@ -65,10 +69,23 @@ grid_map_theme <- function() {
   report_theme() +
     theme(
       legend.position       = "bottom",
+      legend.title.position = "top",
+      legend.title          = element_text(size = 7, hjust = 0.5),
+      legend.text           = element_text(size = 4.5),
       legend.justification  = "center",
-      axis.text = element_blank(),
-      axis.title = element_blank(),
-      axis.ticks = element_blank()
+      legend.key.width      = unit(3.5, "lines"),
+      legend.frame          = element_rect(colour = "black"),
+      legend.ticks          = element_line(colour = "black"),
+      legend.ticks.length   = unit(0.3, "lines"),
+      axis.text             = element_blank(),
+      axis.text.y           = element_blank(),
+      axis.text.x           = element_blank(),
+      axis.title            = element_blank(),
+      axis.line             = element_blank(),
+      axis.ticks            = element_blank(),
+      strip.text            = element_text(size = 6),
+      strip.text.y.left     = element_text(angle = 90),
+      strip.text.y          = element_text(angle = -90)
     )
 }
 
