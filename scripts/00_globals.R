@@ -5,6 +5,7 @@ library(qs2)
 library(here)
 library(janitor)
 library(sf)
+library(readxl)
 
 source(here("scripts/src/other_functions.R"))
 
