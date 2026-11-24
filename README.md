@@ -27,7 +27,9 @@ For the main project repository, see [Fish-MIP/FAO_CC_Risks_to_Fed_Mariculture](
 │   ├── farm_maps/                         # Outputs of 01_map_of_farms.R: Map_farms_EEZ_<ISO3>.png
 │   ├── production_change/                 # Outputs of 03_production_change.R: production_change_GLW_<ISO3>.png
 │   ├── feed_per_biomass_change/           # Outputs of 04_feed_per_biomass_change.R: feed_per_biomass_change_GLW_<ISO3>.png
-│   └── habitat_suitability_maps/          # Outputs of 05_habitat_suitability_change.R: HS_change_grid_<ISO3>[_p<i>of<n>].png
+│   ├── habitat_suitability_maps/          # Outputs of 05_habitat_suitability_change.R: HS_change_grid_<ISO3>[_p<i>of<n>].png
+│   ├── global_production_change.png       # Output of 07_radial_plot_production.R
+│   └── global_feed_required_change.png    # Output of 08_radial_plot_feed_per_biomass.R
 ├── tables/
 │   ├── country_info_all.csv               # Output of 02_country_info.R
 │   └── HS_change_stats_all.csv            # Output of 06_habitat_suitability_change_stats.R
@@ -39,7 +41,8 @@ For the main project repository, see [Fish-MIP/FAO_CC_Risks_to_Fed_Mariculture](
     ├── 04_feed_per_biomass_change.R
     ├── 05_habitat_suitability_change.R
     ├── 06_habitat_suitability_change_stats.R
-    ├── 07_radial_plots.R
+    ├── 07_radial_plot_production.R
+    ├── 08_radial_plot_feed_per_biomass.R
     └── src/
         ├── country_bboxes.R
         └── other_functions.R
@@ -49,7 +52,7 @@ The `habitat_suitability_decadal` rasters include decadal means (`MR_dec_<start>
 
 ## Scripts
 
-Scripts are numbered in the order they are intended to run. `00_globals.R` must be sourced first; scripts `01`–`07` are independent of one another but all assume the packages, data and helpers it loads are in the environment.
+Scripts are numbered in the order they are intended to run. `00_globals.R` must be sourced first; scripts `01`–`08` are independent of one another but all assume the packages, data and helpers it loads are in the environment.
 
 | Script | Description |
 |---|--------------------------------------|
@@ -60,7 +63,8 @@ Scripts are numbered in the order they are intended to run. `00_globals.R` must 
 | `scripts/04_feed_per_biomass_change.R` | Same layout as `03_production_change.R`, but for projected change in feed required per unit of harvested biomass. Writes one PNG per country to `plots/feed_per_biomass_change/`. |
 | `scripts/05_habitat_suitability_change.R` | Maps of relative change in habitat suitability (HS) at each GLW versus the 2015–2024 reference period, faceted by species model (with farm markers) and including a production-weighted panel. Splits large grids across multiple pages using per-country page sizes (`HS_page_params`), and caps the colour scale at the 95th percentile of absolute change. Writes PNGs to `plots/habitat_suitability_maps/`. |
 | `scripts/06_habitat_suitability_change_stats.R` | Summary statistics behind the HS maps: mean HS in the reference period and at each GLW, and percent change, per species model and production-weighted. Computed on the raw rasters for two zones per country: the whole EEZ and within ~50 km of the coast (`data/coastal_zone_50kms/`). Writes `tables/HS_change_stats_all.csv`. |
-| `scripts/07_radial_plots.R` |  |
+| `scripts/07_radial_plot_production.R` | Global radial (circular) bar chart of projected change in production-weighted harvested biomass per country, one panel per GLW. Writes `plots/global_production_change.png`. |
+| `scripts/08_radial_plot_feed_per_biomass.R` | Global radial (circular) bar chart of projected change in production-weighted harvested biomass per country, one panel per GLW. Writes `plots/global_feed_required_change.png`. |
 | `scripts/src/country_bboxes.R` | Helper functions for per-country bounding boxes keyed by ISO3 code: `load_country_bbox_data()` reads `data/country_bbox_data.csv` into a nested list; `bbox()`, `bbox_poly()` and `bbox_lims()` return the padded box as an `st_bbox`, polygon, or `coord_sf()` limits; `crosses_antimeridian()` and `shift_for_bbox()` handle countries straddling 180°; `label_point()` returns label anchors as sf points; `save_map()` saves a ggplot with a fixed panel size. Boxes come from Natural Earth 1:10m Admin 0 padded by ~100 km. |
 | `scripts/src/other_functions.R` | Small shared helpers: NA-safe summary wrappers (`sumna()`, `meanna()`, etc.); `get_country_data()`, which reads consolidated production files and computes change in biomass and feed-per-biomass relative to 2025; `weighted_HS()`, a production-weighted mean of HS rasters; and `pct_limits()`, `pct_breaks()` and `scale_y_pct()` for rounded percentage axes. |
 

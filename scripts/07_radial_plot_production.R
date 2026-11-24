@@ -1,4 +1,4 @@
-# Radial bar chart of % change in fish biomass by EEZ, grouped by region, with one bar per scenario. Recreates the style of the circular "change in fish biomass" figure using ggplot2 + coord_polar().
+# Radial bar chart of % change in production-weighted biomass by EEZ, grouped by region, with one panel per scenario (GLW). 
 
 # Get data
 country_farms <- assigned_farms %>% 
