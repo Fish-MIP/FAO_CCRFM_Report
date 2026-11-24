@@ -8,6 +8,32 @@ medianna <- function(x) {median(x, na.rm = T)}
 sdna <- function(x) {sd(x, na.rm = T)}
 rangena <- function(x) {range(x, na.rm = T)}
 
+get_country_data <- function(fnms) {
+  model_names <- str_extract(basename(fnms), "(?<=_).*(?=\\.qs$)")
+  cons_data   <- map2_dfr(fnms, model_names, function(fn, mn) {qs_read(fn) %>% mutate(model_name = mn)}) %>% 
+    dplyr::select(-feed_prov)
+
+  cons_data_2025 <- cons_data %>% 
+    filter(year == 2025) %>% 
+    dplyr::select(-c(year)) %>% 
+    rename(
+      biomass_2025               = biomass,
+      feed_prov_per_biomass_2025 = feed_prov_per_biomass
+    )
+
+  left_join(
+    cons_data,
+    cons_data_2025,
+    by = join_by(farm_ID, model_name)
+  ) %>% 
+  mutate(
+    biomass_change             = biomass - biomass_2025,
+    biomass_change_pct         = biomass_change/biomass_2025,
+    feed_prov_biom_change      = feed_prov_per_biomass - feed_prov_per_biomass_2025,
+    feed_prov_biom_change_pct  = feed_prov_biom_change/feed_prov_per_biomass_2025
+  )
+}
+
 # Percentage y-axis helpers ---------------------------------------------------
 #
 # Limits are rounded outward to a "round" percentage just outside the data range, and breaks run between them in 10% steps, or 5% steps if 10% would give too few breaks. Values are assumed to be proportions (0.85 = 85%).

@@ -2,32 +2,6 @@
 
 prod_plot_dir <- here("plots/production_change")
 
-get_country_data <- function(fnms) {
-  model_names <- str_extract(basename(fnms), "(?<=_).*(?=\\.qs$)")
-  cons_data   <- map2_dfr(fnms, model_names, function(fn, mn) {qs_read(fn) %>% mutate(model_name = mn)}) %>% 
-    dplyr::select(-feed_prov)
-
-  cons_data_2025 <- cons_data %>% 
-    filter(year == 2025) %>% 
-    dplyr::select(-c(year)) %>% 
-    rename(
-      biomass_2025               = biomass,
-      feed_prov_per_biomass_2025 = feed_prov_per_biomass
-    )
-
-  left_join(
-    cons_data,
-    cons_data_2025,
-    by = join_by(farm_ID, model_name)
-  ) %>% 
-  mutate(
-    biomass_change             = biomass - biomass_2025,
-    biomass_change_pct         = biomass_change/biomass_2025,
-    feed_prov_biom_change      = feed_prov_per_biomass - feed_prov_per_biomass_2025,
-    feed_prov_biom_change_pct  = feed_prov_biom_change/feed_prov_per_biomass_2025
-  )
-}
-
 # this_iso <- unique(assigned_farms$ISO3_Code)[4]
 production_change_plot <- function(this_iso) {
   these_farms <- assigned_farms %>%
@@ -46,10 +20,10 @@ production_change_plot <- function(this_iso) {
   farm_data <- get_country_data(cons_data_files) %>%
     semi_join(these_farms, by = join_by(farm_ID))
 
-  # Models ordered by mean 2025 biomass, largest first
+  # Models ordered by total 2025 biomass, largest first
   model_order <- farm_data %>%
     group_by(model_name) %>%
-    reframe(biomass_2025 = mean(biomass_2025)) %>%
+    reframe(biomass_2025 = sumna(biomass_2025)) %>%
     arrange(-biomass_2025) %>%
     pull(model_name)
 
@@ -135,3 +109,22 @@ production_change_plot <- function(this_iso) {
 }
 
 walk(unique(assigned_farms$ISO3_Code), production_change_plot, .progress = T)
+
+# For troubleshooting ------------------------------------------------------------------------------------
+# Capture warnings and isolate the ISOs they're coming from
+# iso_warnings <- map(set_names(unique(assigned_farms$ISO3_Code)), function(iso) {
+#   w <- character()
+#   withCallingHandlers(
+#     production_change_plot(iso),
+#     warning = function(cnd) {
+#       w <<- c(w, conditionMessage(cnd))
+#       invokeRestart("muffleWarning")
+#     }
+#   )
+#   w
+# }, .progress = TRUE)
+
+# iso_warnings |>
+#   keep(\(x) length(x) > 0) |>
+#   imap_dfr(\(w, iso) tibble(ISO = iso, warning = w)) |>
+#   count(ISO, warning, sort = TRUE)
