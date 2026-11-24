@@ -1,8 +1,9 @@
-# Maps of relative change in habitat suitability (HS) at each global warming level (GLW) vs the 2015-2024 reference period, for each focus country:
-#   - one png per species model farmed in the country (with farm markers)
-#   - one production-weighted png combining all species (no farm markers)
-# Land is drawn from prepped_data/detailed_land_polys and the HS rasters are gap-filled one cell seaward within the 0.75-degree coastal zone (prepped_data/coastal_zone_polys) so there are no white gaps along the coast.
-# Assumes scripts_for_outputs/00_run_all.R has already been run (provides `assigned_farms`, `focus_countries`, `GLW_ls`, `GLW_labels`, `report_theme()`, and paths from src/dirs.R).
+# Grid maps of relative change in habitat suitability (HS) at each global warming level (GLW) vs the 2015-2024 reference period, for each country: GLWs across, species models down (with farm markers), with a production-weighted row first (no farm markers). Grids with many models are split across several pngs according to the per-country page size in `HS_page_params`.
+# HS rasters are gap-filled one cell seaward within the 0.75-degree coastal zone so there are no white gaps along the coast (plotting only; it extrapolates slightly). The colour scale is capped at the 95th percentile of |change|.
+# Requires scripts/00_globals.R to have been sourced (`assigned_farms`, `GLW_ls`, `GLW_labels`, `HS_lyr_names`, `models_lab`, `report_theme()`, `weighted_HS()`, bbox helpers).
+# Reads:  data/habitat_suitability_decadal/<ISO3>/<model>/MR_{ref_2015_2024,GLW_*}.tif
+#         data/land_polygons_plotting/<ISO3>.qs, data/coastal_polygons_plotting/<ISO3>.qs
+# Writes: plots/habitat_suitability_maps/HS_change_grid_<ISO3>[_p<i>of<n>].png
 
 HS_out_dir <- here("plots/habitat_suitability_maps")
 

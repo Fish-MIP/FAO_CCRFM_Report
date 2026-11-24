@@ -1,4 +1,7 @@
-# Collate country-level summary tables (farms per model, excluded farms, FAO production coverage) into one csv per focus country, for copying into report tables. Assumes scripts_for_outputs/00_run_all.R has already been run (provides `assigned_farms`, `focus_countries`, and paths from src/dirs.R).
+# Country-level summary table for the report: assigned farms and mean production per model, farms excluded after the production-run error check, and FAO-reported production (2015 onwards) with the share covered by modelled species. All countries are combined into a single csv.
+# Requires scripts/00_globals.R to have been sourced (`assigned_farms`, `models_lab`, bbox helpers for `country_info()`).
+# Reads:  data/assigned_farms_initial.qs, data/farm_exclusion_decisions.xlsx, data/FAO_production_data_with_models.qs
+# Writes: tables/country_info_all.csv
 
 # Farms excluded after the production run error check. These are no longer in `assigned_farms` (the final set), so map farm_ID -> ISO via the pre-exclusion file.
 farm_iso_lookup <- here("data/assigned_farms_initial.qs") %>%

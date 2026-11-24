@@ -1,4 +1,8 @@
-# This script is a collection of random/helper functions that may be used by other scripts. They're just here so they don't take up too much room.
+# Small helper functions shared by the report scripts. Sourced by scripts/00_globals.R.
+#   - NA-safe summary wrappers: sumna(), maxna(), minna(), meanna(), medianna(), sdna(), rangena()
+#   - get_country_data(): read consolidated farm production files and compute change in biomass and feed-per-biomass relative to 2025 (used by 03, 04, 07)
+#   - weighted_HS(): production-weighted mean of habitat suitability rasters (used by 05, 06)
+#   - pct_limits(), pct_breaks(), scale_y_pct(): rounded percentage axes (used by 03, 04)
 
 sumna <- function(x) {sum(x, na.rm = T)}
 maxna <- function(x) {max(x, na.rm = T)}

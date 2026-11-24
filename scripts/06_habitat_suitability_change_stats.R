@@ -1,17 +1,11 @@
-# Summary statistics of habitat suitability (HS) for each focus country: mean HS
-# in the reference period (2015-2024) and at each global warming level (GLW), plus
-# the % change from the reference period, per species model and production-weighted.
-# Two zones per country, one csv per country (for copying into report tables):
+# Summary statistics of habitat suitability (HS) for each country: mean HS in the reference period (2015-2024) and at each global warming level (GLW), plus the % change from the reference period, per species model and production-weighted. All countries are combined into a single csv.
+# Two zones per country:
 #   - "EEZ":          every cell of the country's HS rasters
-#   - "coastal_50km": sea cells within ~50 km of the country's coastline, using the
-#                     precomputed polygons in prepped_data/coastal_zone_50_polys
-#                     (data-prep-scripts/detailed_land.R). Those are a 62.5 km buffer
-#                     (50 km + half a 0.25-degree cell) around the detailed land polygons,
-#                     so cells whose edge touches the 50 km zone but whose centre does not
-#                     are still included. Cells near other countries' coasts are excluded.
+#   - "coastal_50km": sea cells within ~50 km of the country's coastline, using the precomputed polygons in data/coastal_zone_50kms. Those are a 62.5 km buffer (50 km + half a 0.25-degree cell) around the detailed land polygons, so cells whose edge touches the 50 km zone but whose centre does not are still included. Cells near other countries' coasts are excluded.
 # Stats are calculated on the raw rasters (no coastal gap-filling, which extrapolates).
-# Assumes scripts_for_outputs/00_run_all.R has already been run (provides
-# `assigned_farms`, `focus_countries`, `GLW_ls`, and paths from src/dirs.R).
+# Requires scripts/00_globals.R to have been sourced (`assigned_farms`, `GLW_ls`, `HS_lyr_names`, `weighted_HS()`, bbox helpers for `country_info()`).
+# Reads:  data/habitat_suitability_decadal/<ISO3>/<model>/MR_{ref_2015_2024,GLW_*}.tif, data/coastal_zone_50kms/<ISO3>.qs
+# Writes: tables/HS_change_stats_all.csv
 
 # Mean HS per period for each species raster plus the production-weighted stack, and the % change from the reference period. One row per model, wide by period.
 summarise_HS <- function(rasts, weighted) {

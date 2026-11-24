@@ -1,4 +1,10 @@
-# Load all the packages and data needed for all visualisation scripts
+# Packages, helpers, shared data and plotting settings used by all report scripts (01-07). Source this first; every other script assumes its objects are in the environment.
+#
+# Loads:  scripts/src/other_functions.R, scripts/src/country_bboxes.R
+#         data/country_bbox_data.csv      -> `country_bbox_data`
+#         data/land_polygons_plotting/    -> `land_poly_files`
+#         data/assigned_farms_final.qs    -> `assigned_farms`
+# Defines: GLW year windows, labels, colours and plot offsets (`GLW_ls`, `GLW_labels`, `GLW_cols`, `GLW_offsets`), HS raster layer names (`HS_lyr_names`), ggplot2 themes (`report_theme()` and variants), `GLW_plot_height()`, and the species-model palette and labels (`models_pal`, `models_lab`).
 
 library(tidyverse)
 library(terra)

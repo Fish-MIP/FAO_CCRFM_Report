@@ -1,8 +1,8 @@
 # ---------------------------------------------------------------------------
 # country_bboxes.R
-# Get bounding boxes (and a place to hang other per-country metadata) keyed by ISO 3166-1 alpha-3 code.
+# Get bounding boxes (and a place to hang other per-country metadata) keyed by ISO 3166-1 alpha-3 code. Sourced by scripts/00_globals.R, which then loads the data with:
 #
-#   source("country_bboxes.R")
+#   country_bbox_data <- load_country_bbox_data(here("data/country_bbox_data.csv"))
 #   bbox("LBN", crs = 4326)
 #
 # HOW THE NUMBERS WERE MADE
@@ -18,10 +18,9 @@
 # For countries that straddle 180 deg (RUS, FJI, NZL, ...) xmax is allowed to exceed 180 rather than wrapping, e.g. Fiji is 173.61 -> 182.76. This keeps the box a real interval, which is what st_crop()/coord_sf() need; it is also why you should not assume xmax <= 180 anywhere downstream.
 #
 # EDITING
-# These are hand-tweakable on purpose. Change a number, add a field, add a country; nothing here is derived at load time. Extra fields are free:
+# These are hand-tweakable on purpose. Change a number, add a field, add a country; nothing here is derived at load time. Edit data/country_bbox_data.csv (extra columns are attached to each entry under their own name), or add fields after loading:
 #   country_bbox_data$LBN$display_name <- "Lebanon"
 #   country_bbox_data$LBN$rank         <- 3
-# or just edit the list entry in place below.
 #
 # NOTE: `bbox()` will mask sp::bbox() / raster::bbox() if you use those.
 # ---------------------------------------------------------------------------
@@ -220,10 +219,10 @@ label_point <- function(iso3, crs = 4326, data = country_bbox_data) {
 }
 
 # ---------------------------------------------------------------------------
-# Data: 247 entries, alphabetical by ISO3.
+# Data: 247 entries in data/country_bbox_data.csv, alphabetical by ISO3.
 # xmin/ymin/xmax/ymax are decimal degrees, EPSG:4326.
 # ---------------------------------------------------------------------------
-#' Load country bounding-box data from CSV into the original nested list
+#' Load country bounding-box data from CSV into a nested list
 #'
 #' Any columns beyond the standard set are attached to each country's entry
 #' under their own column name, e.g. a `custom_name` column becomes

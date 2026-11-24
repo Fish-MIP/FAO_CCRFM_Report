@@ -1,4 +1,7 @@
-# Dot-and-line plot of projected change in feed required per unit harvested biomass per model at each global warming level (GLW), one png per focus country. Assumes scripts_for_outputs/00_run_all.R has already been run (provides `assigned_farms`, `focus_countries`, `GLW_ls`, `GLW_labels`, `report_theme()`, and paths from src/dirs.R).
+# Dot-and-line plot of projected change in feed required per unit of harvested biomass per species model at each global warming level (GLW): median and IQR across farms, plus a production-weighted row for multi-model countries. Same layout as 03_production_change.R. One png per country.
+# Requires scripts/00_globals.R to have been sourced (`assigned_farms`, `GLW_ls`, `GLW_labels`, `GLW_cols`, `GLW_offsets`, `models_lab`, `report_theme()`, `GLW_plot_height()`, `get_country_data()`, `pct_limits()`, `pct_breaks()`).
+# Reads:  data/farm_production_consolidated/<ISO3>_<model>.qs
+# Writes: plots/feed_per_biomass_change/feed_per_biomass_change_GLW_<ISO3>.png
 
 feed_plot_dir <- here("plots/feed_per_biomass_change")
 

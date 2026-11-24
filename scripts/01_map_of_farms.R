@@ -1,5 +1,7 @@
-# Map of assigned farm locations for each focus country.
-# Assumes scripts_for_outputs/00_run_all.R has already been run.
+# Map of assigned farm locations, coloured by species model, over the country's land polygon and dissolved EEZ outline. One png per country in `assigned_farms`.
+# Requires scripts/00_globals.R to have been sourced (`assigned_farms`, `land_poly_files`, `models_pal`, `models_lab`, `farm_map_theme()`, bbox helpers).
+# Reads:  data/EEZ_data_with_FAO_regions.qs, data/land_polygons_plotting/<ISO3>.qs
+# Writes: plots/farm_maps/Map_farms_EEZ_<ISO3>.png
 
 farm_map_dir <- here("plots/farm_maps")
 
