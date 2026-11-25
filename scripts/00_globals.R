@@ -49,7 +49,7 @@ report_theme <- function() {
       axis.text.y           = element_text(),
       axis.title.x          = element_text(margin = margin(t = 6), vjust = 1.5),
       axis.title.y          = element_text(vjust = 1.5),
-      plot.margin           = margin(t = 0.5, r = 0.5, b = 0, l = 0.5, unit = "cm")
+      plot.margin           = margin(t = 0.25, r = 0.1, b = 0, l = 0.1, unit = "cm")
     )
   }
 
