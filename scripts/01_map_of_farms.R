@@ -5,25 +5,20 @@
 
 farm_map_dir <- here("plots/farm_maps")
 
-# Dissolving the FAO-region pieces into one geometry per country fails under spherical (s2) geometry, so do the union planar and restore s2 afterwards.
-sf_use_s2(FALSE)
-EEZ_by_FAO_full <- here("data/EEZ_data_with_FAO_regions.qs") %>%
-  qd_read() %>%
-  st_transform(crs = 4326) %>%
-  st_make_valid() %>% 
-  group_by(ISO3_Code) %>% 
-  summarise(.groups = "drop")
-sf_use_s2(TRUE)
+EEZ_data <- here("data/EEZ_data.qs") %>%
+  qs_read() %>%
+  st_transform(crs = 4326)
 
+# this_iso <- "NZL"
 farm_location_map <- function(this_iso) {
   these_farms  <- assigned_farms %>% filter(ISO3_Code == this_iso)
   this_country <- unique(these_farms$country)
 
   # Hong Kong is the only region without its own ISO code - it will inherit China's
   this_eez <- if (this_iso == "HKG") {
-    EEZ_by_FAO_full %>% filter(ISO3_Code == "CHN")
+    EEZ_data %>% filter(ISO3_Code == "CHN")
   } else {
-    EEZ_by_FAO_full %>% filter(ISO3_Code == this_iso)
+    EEZ_data %>% filter(ISO3_Code == this_iso)
   }
 
   # Countries straddling 180° (e.g. FJI) need their data shifted to 0..360 to match the bbox
@@ -40,7 +35,6 @@ farm_location_map <- function(this_iso) {
   names(country_pal) <- models_here
   country_pal[is.na(country_pal)] <- "grey50"
 
-  # `eez_layer` is drawn between the land and the farms so the border doesn't cover points
   p_eez <- ggplot() +
       geom_sf(data = this_land, fill = "grey85", colour = "grey55", linewidth = 0.2) +
       geom_sf(data = this_eez, fill = NA, colour = "grey30", linewidth = 0.4, linetype = "dotted") +
