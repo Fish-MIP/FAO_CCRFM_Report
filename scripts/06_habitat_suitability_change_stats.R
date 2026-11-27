@@ -109,6 +109,7 @@ HS_change_stats <- function(this_iso) {
 
 map_dfr(unique(assigned_farms$ISO3_Code), HS_change_stats, .progress = T) %>% 
   relocate(zone, .after = country) %>% 
+  dplyr::select(-c("mean_HS_ref_2015_2024", "mean_HS_GLW_1.5", "mean_HS_GLW_2.0", "mean_HS_GLW_3.0", "mean_HS_GLW_4.0")) %>% 
   write.csv(here("tables/HS_change_stats_all.csv"), na = "", row.names = FALSE)
 
 # For troubleshooting ------------------------------------------------------------------------------------

@@ -1,5 +1,5 @@
 # Grid maps of relative change in habitat suitability (HS) at each global warming level (GLW) vs the 2015-2024 reference period, for each country: GLWs across, species models down (with farm markers), with a production-weighted row first (no farm markers). Grids with many models are split across several pngs according to the per-country page size in `HS_page_params`.
-# HS rasters are gap-filled one cell seaward within the 0.75-degree coastal zone so there are no white gaps along the coast (plotting only; it extrapolates slightly). The colour scale is capped at the 95th percentile of |change|.
+# The colour scale is capped at the 95th percentile of |change|.
 # Requires scripts/00_globals.R to have been sourced (`assigned_farms`, `GLW_ls`, `GLW_labels`, `HS_lyr_names`, `models_lab`, `report_theme()`, `weighted_HS()`, bbox helpers).
 # Reads:  data/habitat_suitability_decadal/<ISO3>/<model>/MR_{ref_2015_2024,GLW_*}.tif
 #         data/land_polygons_plotting/<ISO3>.qs, data/coastal_polygons_plotting/<ISO3>.qs
@@ -28,15 +28,6 @@ HS_page_params <- data.frame(ISO3_Code = unique(assigned_farms$ISO3_Code)) %>%
 HS_overhead_h <- 2.75
 HS_side_w     <- 0.75
 
-# Gap-fill one cell around the coastline so there are no white gaps between the
-# land polygon and the HS data. This extrapolates slightly, so it is for plotting only.
-fill_coastal_gaps <- function(r, coast_zone, w = 3) {
-  if (is.null(coast_zone)) return(r)
-  filled <- focal(r, w, "mean", na.rm = TRUE, na.policy = "only")
-  # terra::mask() needs a SpatVector, not an sf/sfc object
-  cover(r, mask(filled, vect(coast_zone)))
-}
-
 # Shift a -180..180 raster to 0..360 (terra::rotate() only goes the other way)
 shift_raster_360 <- function(r) {
   e <- ext(r)
@@ -46,7 +37,7 @@ shift_raster_360 <- function(r) {
   merge(east, west)
 }
 
-# this_iso <- unique(assigned_farms$ISO3_Code)[18]
+# this_iso <- "NZL"
 HS_change_maps <- function(this_iso) {
   pg <- filter(HS_page_params, ISO3_Code == this_iso)
   these_farms <- assigned_farms %>% filter(ISO3_Code == this_iso)
@@ -84,8 +75,7 @@ HS_change_maps <- function(this_iso) {
     function(m) {
       r <- rast(file.path(HS_path, m, paste0("MR_", HS_lyr_names, ".tif"))) / 365
       names(r) <- HS_lyr_names
-      if (shift_raster) r <- shift_raster_360(r)
-      names(r) <- HS_lyr_names
+      # if (shift_raster) r <- shift_raster_360(r)
       r
     }
   )
@@ -101,12 +91,12 @@ HS_change_maps <- function(this_iso) {
   HS_weights <- set_names(HS_weights$value, HS_weights$model_name)[HS_models]
   HS_change_weighted <- weighted_HS(HS_change, HS_weights)
 
-  # Gap-filled, long-format change values for every panel (weighted mean first).
+  # Long-format change values for every panel (weighted mean first).
   # Used for the grid plot and for the colour limit shared by all plots.
   panels       <- c(list(weighted = HS_change_weighted), HS_change)
   panel_labels <- c(weighted = "Production-weighted", models_lab[HS_models])
   change_df <- imap(panels, \(r, nm) {
-    fill_coastal_gaps(r, coast_zone) %>%
+    r %>% 
       as.data.frame(xy = TRUE, na.rm = FALSE) %>%
       pivot_longer(all_of(names(GLW_ls)), names_to = "lyr", values_to = "change") %>%
       filter(!is.na(change)) %>%
@@ -148,7 +138,7 @@ HS_change_maps <- function(this_iso) {
   # Every figure is page_width wide with 4 panel columns, so the row height follows from the map aspect ratio and all panels come out the same size.
   lims    <- bbox_lims(this_iso)
   aspect  <- diff(lims$ylim) / (diff(lims$xlim) * cos(mean(lims$ylim) * pi / 180))
-  row_h   <- ((pg$page_width - HS_side_w) / 4) * aspect
+  row_h   <- if (this_iso %in% c("MYS", "IDN")) {((pg$page_width - HS_side_w) / 3.75) * aspect} else {((pg$page_width - HS_side_w) / 4) * aspect}
   fig_h   <- function(n_rows) {HS_overhead_h + (n_rows * row_h)}
 
   row_panels   <- if (length(HS_models) == 1) {HS_models} else {names(panels)}
