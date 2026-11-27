@@ -40,10 +40,11 @@ To produce the data and maps in this repository, we used the following publicly 
 │   ├── assigned_farms_initial.qs          # Farm set before error-check exclusions
 │   ├── farm_exclusion_decisions.xlsx      # Farms excluded after the production-run error check, with reasons
 │   ├── FAO_production_data_with_models.qs # FAO production by country/species, mapped to species models
-│   ├── EEZ_data_with_FAO_regions.qs       # EEZ polygons split by FAO region, keyed by ISO3 code
+│   ├── EEZ_data_with_FAO_regions.qs       # EEZ polygons by ISO3 code x FAO region, 
+│   ├── EEZ_data.qs                        # EEZ polygons by ISO3 code
 │   ├── country_bbox_data.csv              # Per-country bounding boxes
 │   ├── land_polygons_plotting/            # Simplified land polygon per country
-│   ├── coastal_polygons_plotting/         # 0.75-degree coastal zone per country
+│   ├── coastal_polygons_plotting/         # 0.75-degree coastal zone per country (for prettier plotting)
 │   ├── coastal_zone_50kms/                # ~50 km coastal zone per country
 │   ├── farm_production_consolidated/      # Consolidated farm production per country x model
 │   └── habitat_suitability_decadal/       # Habitat suitability rasters

@@ -2,7 +2,7 @@
 # The colour scale is capped at the 95th percentile of |change|.
 # Requires scripts/00_globals.R to have been sourced (`assigned_farms`, `GLW_ls`, `GLW_labels`, `HS_lyr_names`, `models_lab`, `report_theme()`, `weighted_HS()`, bbox helpers).
 # Reads:  data/habitat_suitability_decadal/<ISO3>/<model>/MR_{ref_2015_2024,GLW_*}.tif
-#         data/land_polygons_plotting/<ISO3>.qs, data/coastal_polygons_plotting/<ISO3>.qs
+#         data/land_polygons_plotting/<ISO3>.qs
 # Writes: plots/habitat_suitability_maps/HS_change_grid_<ISO3>[_p<i>of<n>].png
 
 HS_out_dir <- here("plots/habitat_suitability_maps")
@@ -58,16 +58,14 @@ HS_change_maps <- function(this_iso) {
 
   # Simplified, validated land from data-prep-scripts/detailed_land.R; the full detailed_land_polys are far too heavy to shift or render for big countries
   land_file  <- here("data/land_polygons_plotting", paste0(this_iso, ".qs"))
-  coast_file <- here("data/coastal_polygons_plotting", paste0(this_iso, ".qs"))
-  if (!file.exists(land_file) || !file.exists(coast_file)) {
-    stop(this_iso, ": missing plot land or coastal zone polygons")
+  if (!file.exists(land_file)) {
+    stop(this_iso, ": missing plot land polygons")
   }
 
   # Countries straddling 180° (e.g. FJI) need everything shifted to 0..360 to match the bbox
   shift_raster <- crosses_antimeridian(this_iso)
   these_farms  <- shift_for_bbox(these_farms, this_iso)
   this_land    <- qs_read(land_file)  %>% shift_for_bbox(this_iso)
-  coast_zone   <- qs_read(coast_file) %>% shift_for_bbox(this_iso)
 
   # One SpatRaster per species: layers = ref + each GLW, scaled to 0-1
   HS_rasts <- map(
